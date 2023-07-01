@@ -1,0 +1,214 @@
+module ietf-bundle-protocol {
+  yang-version 1.1;
+  namespace "urn:ietf:params:xml:ns:yang:ietf-bundle-protocol";
+  prefix bundle;
+
+  import ietf-bundle-protocol-types {
+    prefix bundle-types;
+  }
+  import ietf-yang-types {
+    prefix yang;
+  }
+
+  organization
+    "IETF DTN (Delay-Tolerant Networking) Working Group";
+  contact
+    "TBD";
+  description
+    "This module contains Bundle Protocol (RFC5050, RFC9171) types.
+
+      The key words 'MUST', 'MUST NOT', 'REQUIRED', 'SHALL', 'SHALL
+      NOT', 'SHOULD', 'SHOULD NOT', 'RECOMMENDED', 'NOT RECOMMENDED',
+      'MAY', and 'OPTIONAL' in this document are to be interpreted as
+      described in BCP 14 (RFC 2119) (RFC 8174) when, and only when,
+      they appear in all capitals, as shown here.
+
+      Copyright (c) 2019 IETF Trust and the persons identified as
+      authors of the code.  All rights reserved.
+
+      Redistribution and use in source and binary forms, with or
+      without modification, is permitted pursuant to, and subject
+      to the license terms contained in, the Simplified BSD License
+      set forth in Section 4.c of the IETF Trust's Legal Provisions
+      Relating to IETF Documents
+      (https://trustee.ietf.org/license-info).
+
+      This version of this YANG module is part of RFC TBD; see
+      the RFC itself for full legal notices.";
+
+  revision 2023-08-01 {
+    description
+      "Initial revision. date TBD";
+    reference
+      "RFC 5050 Bundle Protocol Specification
+       RFC 9171 Bundle Protocol Version 7
+       IANA Bundle Protocol Registry, https://www.iana.org/assignments/bundle/bundle.xhtml";
+  }
+
+  container bundle {
+    config false;
+    description
+      "Fields of a bundle";
+    leaf id {
+      type yang:yang-identifier;
+      description
+        "Unique id of a bundle. Local to the implementation. Enables referencing it for
+         management purposes";
+    }
+    leaf version {
+      type bundle-types:bundle-protocol-version;
+      description
+        "Bundle protocol version";
+    }
+    leaf-list processing-control-flags {
+      type bundle-types:bundle-processing-control-flag;
+      description
+        "List of bundle processing control flags";
+    }
+    leaf destination-endpoint-identifier {
+      type bundle-types:bundle-endpoint-identifier;
+      description
+        "Endpoint identifier of the destination";
+    }
+    leaf source-node-endpoint-identifier {
+      type bundle-types:bundle-endpoint-identifier;
+      description
+        "Endpoint identifier of the source node";
+    }
+    leaf report-to-endpoint-identifier {
+      type bundle-types:bundle-endpoint-identifier;
+      description
+        "Endpoint identifier of the node to send reports to";
+    }
+    leaf creation-timestamp {
+      type yang:timestamp;
+      description
+        "Creation timestamp";
+    }
+    leaf lifetime {
+      type uint32;
+      units "seconds";
+      description
+        "Lifetime of the bundle in seconds";
+    }
+    leaf application-data-unit-length {
+      type uint32;
+      units "octets";
+      description
+        "Application data unit (aka bundle payload) length in octets";
+    }
+    /* TBD: additional fields: fragmentoffset, crc-type, ... */
+  }
+  container node {
+    description
+      "A bundle protocol node";
+    leaf-list version {
+      type bundle-types:bundle-protocol-version;
+      description
+        "The list of bundle protocol versions this node supports";
+    }
+    leaf endpoint_identifier {
+      type bundle-types:bundle-endpoint-identifier;
+      description
+        "The endpoint identifier of this node";
+    }
+    leaf bundle-lifetime {
+      type uint32;
+      units "seconds";
+      description
+        "The default bundle lifetime";
+    }
+    leaf maximum-bundle-size {
+      type uint32;
+      units "octets";
+      description
+        "The maximum bundle size in bytes";
+    }
+    leaf send-status-reports {
+      type boolean;
+      default "false";
+      description
+        "Should the node send status reports";
+    }
+    list neighbors {
+      key "endpoint-identifier";
+      container neighbor {
+        description
+          "A bundle protocol neighbor of this node. May not be active";
+        leaf activated {
+          type boolean;
+          default "false";
+          description
+            "The configuration status of the neighbor";
+        }
+        leaf active {
+          type boolean;
+          description
+            "From the perspective of the node, this neighbor is live and active";
+        }
+        leaf endpoint-identifier {
+          type bundle-types:bundle-endpoint-identifier;
+          description
+            "Endpoint identifier of the neighbor";
+        }
+        /* here should be augmented by the contact plan start, stop time, ... */
+        container convergence-layer-adapter {
+          uses bundle-types:convergence-layer-adapter;
+          description
+            "The convergence layer adapter of this neighbor";
+        }
+      }
+      leaf endpoint-identifier {
+        type leafref {
+          path "../neighbor/endpoint-identifier";
+        }
+        description
+          "The identifier of the neighbor";
+      }
+      description
+        "List of bundle protocol neighbors of this node";
+    }
+    /* TBD: from TVR work
+      leaf-list forwarding-policies {
+      }
+     */
+    leaf bundle-queue-size {
+      type uint32;
+      units "octets";
+      description
+        "The bundle queue size in bytes";
+    }
+    leaf-list convergence-layer-adapters {
+      type bundle-types:convergence-layer-adapter-type;
+      description
+        "The list of convergence layer adapters currently configured on the node";
+    }
+    container store {
+      description
+        "Storage for bundles that are waiting in storage because the destination is not reachable yet,
+         as opposed to temporary bundles in memory about to be forwarded";
+      leaf maximum-size {
+        type uint32;
+        description
+          "maximum number of bytes of bundles storage";
+      }
+      leaf current-size {
+        type uint32;
+        config false;
+        description
+          "current size (in bytes) of used bundles storage";
+      }
+      leaf maximum-bundles {
+        type uint32;
+        description
+          "maximum number of bundles in storage";
+      }
+      leaf bundles-number {
+        type uint32;
+        config false;
+        description
+          "current number of bundles in storage";
+      }
+    }
+  }
+}
