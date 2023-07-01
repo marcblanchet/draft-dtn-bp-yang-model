@@ -217,4 +217,37 @@ module ietf-bundle-protocol-types {
     description
       "Bundle protocol Endpoint Identifier type";
   }
+
+  grouping address-port {
+    leaf ip {
+      type inet:ip-address;
+      description
+        "The IPv4 or IPv6 address";
+    }
+    leaf port {
+      type inet:port-number;
+      description
+        "The tranport port number";
+    }
+    description
+      "IP address and port";
+  }
+
+  grouping convergence-layer-adapter {
+    leaf type {
+      type bundle-types:convergence-layer-adapter-type;
+      description
+        "Type of the convergence layer of this neighbor";
+    }
+    choice transport {
+      case udp-and-tcp {
+        uses address-port;
+      }
+      /* other cla */
+      description
+        "Convergence layer adapter specific transport information";
+    }
+    description
+      "The convergence layer adapter used to communicate with this neighbor";
+  }
 }
