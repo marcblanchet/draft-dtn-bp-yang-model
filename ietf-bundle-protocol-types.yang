@@ -1,7 +1,7 @@
 module ietf-bundle-protocol-types {
   yang-version 1.1;
   namespace "urn:ietf:params:xml:ns:yang:ietf-bundle-protocol-types";
-  prefix bundle;
+  prefix bundle-types;
 
   import ietf-inet-types {
     prefix inet;
