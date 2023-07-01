@@ -1,0 +1,220 @@
+module ietf-bundle-protocol-types {
+  yang-version 1.1;
+  namespace "urn:ietf:params:xml:ns:yang:ietf-bundle-protocol-types";
+  prefix bundle;
+
+  import ietf-inet-types {
+    prefix inet;
+    reference
+      "RFC 6991: Common YANG Data Types";
+  }
+
+  organization
+    "IETF DTN (Delay-Tolerant Networking) Working Group";
+  contact
+    "TBD";
+  description
+    "This module contains Bundle Protocol (RFC5050, RFC9171) types.
+
+      The key words 'MUST', 'MUST NOT', 'REQUIRED', 'SHALL', 'SHALL
+      NOT', 'SHOULD', 'SHOULD NOT', 'RECOMMENDED', 'NOT RECOMMENDED',
+      'MAY', and 'OPTIONAL' in this document are to be interpreted as
+      described in BCP 14 (RFC 2119) (RFC 8174) when, and only when,
+      they appear in all capitals, as shown here.
+
+      Copyright (c) 2019 IETF Trust and the persons identified as
+      authors of the code.  All rights reserved.
+
+      Redistribution and use in source and binary forms, with or
+      without modification, is permitted pursuant to, and subject
+      to the license terms contained in, the Simplified BSD License
+      set forth in Section 4.c of the IETF Trust's Legal Provisions
+      Relating to IETF Documents
+      (https://trustee.ietf.org/license-info).
+
+      This version of this YANG module is part of RFC TBD; see
+      the RFC itself for full legal notices.";
+
+  revision 2023-08-01 {
+    description
+      "Initial revision. date TBD";
+    reference
+      "RFC 5050 Bundle Protocol Specification
+       RFC 9171 Bundle Protocol Version 7
+       IANA Bundle Protocol Registry, https://www.iana.org/assignments/bundle/bundle.xhtml";
+  }
+
+  typedef bundle-block-types {
+    type enumeration {
+      enum unknown {
+        value 0;
+        description
+          "Unknown block type";
+      }
+      enum payload-block {
+        value 1;
+        description
+          "Payload block type";
+      }
+      enum authentication-block {
+        value 2;
+        description
+          "Authentication block type";
+      }
+      enum payload-integrity-block {
+        value 3;
+        description
+          "payload integrity block type";
+      }
+      enum previous-hop-insertion-block {
+        value 4;
+        description
+          "Previous hop insertion block type";
+      }
+      enum previous-node {
+        value 6;
+        description
+          "Previous node type";
+      }
+      enum bundle-age {
+        value 7;
+        description
+          "Bundle age type";
+      }
+      enum metadata-extension-block {
+        value 8;
+        description
+          "Metadata extension type";
+      }
+      enum extension-security-block {
+        value 9;
+        description
+          "Extension security block type";
+      }
+      enum hop-count {
+        value 10;
+        description
+          "Hop count type";
+      }
+      enum block-integrity {
+        value 11;
+        description
+          "Block integrity type";
+      }
+      enum block-confidentialy {
+        value 12;
+        description
+          "Block confidentiality type";
+      }
+    }
+    description
+      "Bundle block types";
+    reference
+      "https://www.iana.org/assignments/bundle/bundle.xhtml#block-types";
+  }
+
+  typedef bundle-protocol-version {
+    type enumeration {
+      enum unknown {
+        value 0;
+        description
+          "An unknown or unspecified version of the Bundle protocol.";
+      }
+      enum version6 {
+        value 6;
+        description
+          " The Bundle protocol version 6 as defined in RFC5050";
+      }
+      enum version7 {
+        value 7;
+        description
+          "The Bundle protocol version 7 as defined in RFC9171";
+      }
+    }
+    description
+      "Bundle protocol version number";
+    reference
+      "https://www.iana.org/assignments/bundle/bundle.xhtml#primary-version";
+  }
+
+  typedef bundle-processing-control-flag {
+    type enumeration {
+      enum unknown {
+        description
+          "Uknown control flag";
+      }
+      enum block-replicated-every-fragment {
+        description
+          "Block must be replicated in every fragment";
+      }
+      enum transmit-status-report-block-not-processed {
+        description
+          "Transmit status report if block can't be processed";
+      }
+      enum delete-bundle-block-not-processed {
+        description
+          "Delete bundle if block can't be processed";
+      }
+      enum last-block {
+        description
+          "Last block";
+      }
+      enum discard-block-not-processed {
+        description
+          "Discard block if it can't be processed";
+      }
+      enum block-forwarded-not-processed {
+        description
+          "Block was forwarded without being processed";
+      }
+      enum block-contains-eid-reference {
+        description
+          "Block contains an EID-reference field";
+      }
+    }
+    description
+      "Bundle processing control flags";
+    reference
+      "https://www.iana.org/assignments/bundle/bundle.xhtml#block-processing-control";
+  }
+
+  /* TBD: more defs from IANA registry
+   */
+
+  typedef convergence-layer-adapter-type {
+    type enumeration {
+      enum tcpcl {
+        description
+          "TCP convergence layer";
+        reference
+          "RFC7242 Delay-Tolerant Networking TCP Convergence-Layer Protocol";
+      }
+      enum tcpclv4 {
+        description
+          "TCPv4 convergence layer";
+        reference
+          "RFC9174 Delay-Tolerant Networking TCP Convergence-Layer Protocol Version 4";
+      }
+      enum udpcl {
+        description
+          "UDP convergence layer";
+        reference
+          "RFC7122 Datagram Convergence Layers for the Delay- and Disruption-Tolerant Networking (DTN) Bundle Protocol and Licklider Transmission Protocol (LTP)";
+      }
+      enum ltp {
+        description
+          "Licklider Transmission Protocol";
+        reference
+          "RFC 5326 Licklider Transmission Protocol - Specification";
+      }
+    }
+    description
+      "Types of convergence layers of Bundle protocol";
+  }
+
+  typedef bundle-endpoint-identifier {
+    type inet:uri;
+    description
+      "Bundle protocol Endpoint Identifier type";
+  }
+}
