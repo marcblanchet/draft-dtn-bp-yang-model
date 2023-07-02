@@ -11,9 +11,16 @@ module ietf-bundle-protocol {
   }
 
   organization
-    "IETF DTN (Delay-Tolerant Networking) Working Group";
+    "IETF DTN: Delay-Tolerant Networking Working Group";
   contact
-    "TBD";
+    "WG Web:   <http://datatracker.ietf.org/wg/dtn>
+     WG List:  <mailto:dtn@ietf.org>
+
+     Author:   Marc Blanchet
+               <mailto:marc.blanchet@viagenie.ca>
+     Author:    Yingzhen Qu
+               <mailto:yingzhen.ietf@gmail.com>";
+
   description
     "This module contains Bundle Protocol (RFC5050, RFC9171) types.
 
@@ -23,13 +30,13 @@ module ietf-bundle-protocol {
       described in BCP 14 (RFC 2119) (RFC 8174) when, and only when,
       they appear in all capitals, as shown here.
 
-      Copyright (c) 2019 IETF Trust and the persons identified as
+      Copyright (c) 2023 IETF Trust and the persons identified as
       authors of the code.  All rights reserved.
 
       Redistribution and use in source and binary forms, with or
-      without modification, is permitted pursuant to, and subject
-      to the license terms contained in, the Simplified BSD License
-      set forth in Section 4.c of the IETF Trust's Legal Provisions
+      without modification, is permitted pursuant to, and subject to
+      the license terms contained in, the Revised BSD License set
+      forth in Section 4.c of the IETF Trust's Legal Provisions
       Relating to IETF Documents
       (https://trustee.ietf.org/license-info).
 
@@ -42,7 +49,8 @@ module ietf-bundle-protocol {
     reference
       "RFC 5050 Bundle Protocol Specification
        RFC 9171 Bundle Protocol Version 7
-       IANA Bundle Protocol Registry, https://www.iana.org/assignments/bundle/bundle.xhtml";
+       IANA Bundle Protocol Registry, 
+       https://www.iana.org/assignments/bundle/bundle.xhtml";
   }
 
   container bundle {
@@ -52,8 +60,8 @@ module ietf-bundle-protocol {
     leaf id {
       type yang:yang-identifier;
       description
-        "Unique id of a bundle. Local to the implementation. Enables referencing it for
-         management purposes";
+        "Unique id of a bundle. Local to the implementation. Enables
+         referencing it for management purposes";
     }
     leaf version {
       type bundle-types:bundle-protocol-version;
@@ -99,6 +107,7 @@ module ietf-bundle-protocol {
     }
     /* TBD: additional fields: fragmentoffset, crc-type, ... */
   }
+
   container node {
     description
       "A bundle protocol node";
@@ -175,12 +184,14 @@ module ietf-bundle-protocol {
     leaf-list convergence-layer-adapters {
       type bundle-types:convergence-layer-adapter-type;
       description
-        "The list of convergence layer adapters currently configured on the node";
+        "The list of convergence layer adapters currently configured
+         on the node";
     }
     container store {
       description
-        "Storage for bundles that are waiting in storage because the destination is not reachable yet,
-         as opposed to temporary bundles in memory about to be forwarded";
+        "Storage for bundles that are waiting in storage because the
+         destination is not reachable yet, as opposed to temporary
+         bundles in memory about to be forwarded";
       leaf maximum-size {
         type uint32;
         description
