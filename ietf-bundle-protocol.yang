@@ -130,12 +130,12 @@ module ietf-bundle-protocol {
       description
         "Should the node send status reports";
     }
-    list neighbors {
-      key "endpoint-identifier";
-      container neighbor {
+    container neighbors {
+      list neighbor {
+        key "endpoint-identifier";
         description
           "A bundle protocol neighbor of this node. May not be active";
-        leaf activated {
+        leaf activate {
           type boolean;
           default "false";
           description
@@ -143,6 +143,7 @@ module ietf-bundle-protocol {
         }
         leaf active {
           type boolean;
+          config false;
           description
             "From the perspective of the node, this neighbor is live and active";
         }
@@ -157,13 +158,6 @@ module ietf-bundle-protocol {
           description
             "The convergence layer adapter of this neighbor";
         }
-      }
-      leaf endpoint-identifier {
-        type leafref {
-          path "../neighbor/endpoint-identifier";
-        }
-        description
-          "The identifier of the neighbor";
       }
       description
         "List of bundle protocol neighbors of this node";
