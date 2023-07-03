@@ -20,7 +20,6 @@ module ietf-bundle-protocol {
                <mailto:marc.blanchet@viagenie.ca>
      Author:    Yingzhen Qu
                <mailto:yingzhen.ietf@gmail.com>";
-
   description
     "This module contains Bundle Protocol (RFC5050, RFC9171) types.
 
@@ -49,7 +48,7 @@ module ietf-bundle-protocol {
     reference
       "RFC 5050 Bundle Protocol Specification
        RFC 9171 Bundle Protocol Version 7
-       IANA Bundle Protocol Registry, 
+       IANA Bundle Protocol Registry,
        https://www.iana.org/assignments/bundle/bundle.xhtml";
   }
 
@@ -107,7 +106,6 @@ module ietf-bundle-protocol {
     }
     /* TBD: additional fields: fragmentoffset, crc-type, ... */
   }
-
   container node {
     description
       "A bundle protocol node";
@@ -213,6 +211,12 @@ module ietf-bundle-protocol {
         config false;
         description
           "current number of bundles in storage";
+      }
+      list bundles {
+        key "id";
+        uses bundle-types:bundle;
+        description
+          "Stored bundles awaiting forwarding";
       }
     }
   }
