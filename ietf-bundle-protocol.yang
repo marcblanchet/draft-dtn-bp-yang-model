@@ -6,9 +6,6 @@ module ietf-bundle-protocol {
   import ietf-bundle-protocol-types {
     prefix bundle-types;
   }
-  import ietf-yang-types {
-    prefix yang;
-  }
 
   organization
     "IETF DTN: Delay-Tolerant Networking Working Group";
@@ -52,60 +49,6 @@ module ietf-bundle-protocol {
        https://www.iana.org/assignments/bundle/bundle.xhtml";
   }
 
-  container bundle {
-    config false;
-    description
-      "Fields of a bundle";
-    leaf id {
-      type yang:yang-identifier;
-      description
-        "Unique id of a bundle. Local to the implementation. Enables
-         referencing it for management purposes";
-    }
-    leaf version {
-      type bundle-types:bundle-protocol-version;
-      description
-        "Bundle protocol version";
-    }
-    leaf-list processing-control-flags {
-      type bundle-types:bundle-processing-control-flag;
-      description
-        "List of bundle processing control flags";
-    }
-    leaf destination-endpoint-identifier {
-      type bundle-types:bundle-endpoint-identifier;
-      description
-        "Endpoint identifier of the destination";
-    }
-    leaf source-node-endpoint-identifier {
-      type bundle-types:bundle-endpoint-identifier;
-      description
-        "Endpoint identifier of the source node";
-    }
-    leaf report-to-endpoint-identifier {
-      type bundle-types:bundle-endpoint-identifier;
-      description
-        "Endpoint identifier of the node to send reports to";
-    }
-    leaf creation-timestamp {
-      type yang:timestamp;
-      description
-        "Creation timestamp";
-    }
-    leaf lifetime {
-      type uint32;
-      units "seconds";
-      description
-        "Lifetime of the bundle in seconds";
-    }
-    leaf application-data-unit-length {
-      type uint32;
-      units "octets";
-      description
-        "Application data unit (aka bundle payload) length in octets";
-    }
-    /* TBD: additional fields: fragmentoffset, crc-type, ... */
-  }
   container node {
     description
       "A bundle protocol node";
