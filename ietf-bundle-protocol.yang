@@ -102,11 +102,15 @@ module ietf-bundle-protocol {
           description
             "Endpoint identifier of the neighbor";
         }
-        /* here should be augmented by the contact plan start, stop time, ... */
-        container convergence-layer-adapter {
-          uses bundle-types:convergence-layer-adapter;
+        container convergence-layer-adapters {
+          list convergence-layer-adapter {
+            key "id";
+            uses bundle-types:convergence-layer-adapter;
+            description
+              "A convergence layer adapter of this neighbor";
+          }
           description
-            "The convergence layer adapter of this neighbor";
+            "The convergence layer adapters of this neighbor";
         }
       }
       description

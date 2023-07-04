@@ -251,6 +251,12 @@ module ietf-bundle-protocol-types {
   }
 
   grouping convergence-layer-adapter {
+    leaf id {
+      type yang:yang-identifier;
+      description
+        "Unique id of this CLA. Local to the implementation. Enables referencing it for
+         management purposes";
+    }
     leaf type {
       type bundle-types:convergence-layer-adapter-type;
       description
