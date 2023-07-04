@@ -760,7 +760,7 @@ module ietf-bundle-protocol {
     </references>
     <section anchor="Acknowledgements" numbered="false">
       <name>Acknowledgements</name>
-      <t>The following people have reviewed and provided comments to improve this document (in no particular order): .</t>
+      <t>The following people have reviewed and provided comments to improve this document (in no particular order): Felix Walter.</t>
     </section>
   </back>
 </rfc>
