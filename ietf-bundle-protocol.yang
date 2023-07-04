@@ -80,6 +80,13 @@ module ietf-bundle-protocol {
       description
         "Should the node send status reports";
     }
+    leaf forwarding {
+      type boolean;
+      default "false";
+      description
+        "Controls forwarding of bundles received by,
+         but not addressed to, this node.";
+    }
     container neighbors {
       list neighbor {
         key "endpoint-identifier";
