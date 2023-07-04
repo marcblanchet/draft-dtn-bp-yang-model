@@ -658,7 +658,45 @@ module ietf-bundle-protocol {
     </section>
     <section anchor="Security">
       <name>Security Considerations</name>
-      <t>TBD</t>
+      <t>
+        The YANG modules specified in this document define a schema for
+        data that is designed to be accessed via network
+        management protocols such as NETCONF <xref target="RFC6241"/> or
+        RESTCONF <xref target="RFC8040"/>. The lowest NETCONF layer is the secure transport
+        layer, and the mandatory-to-implement secure transport is Secure Shell (SSH)
+        <xref target="RFC6242"/>. The lowest RESTCONF layer is HTTPS, and the
+        mandatory-to-implement secure transport is TLS <xref target="RFC8446"/>.
+      </t>
+
+      <t>
+        The NETCONF access control model <xref target="RFC8341"/> provides the
+        means to restrict access for particular NETCONF or RESTCONF users to a
+        pre-configured subset of all available NETCONF or RESTCONF protocol
+        operations and content.
+      </t>
+
+      <t>
+        There are a number of data nodes defined in ietf-bundle-protocol.yang module
+        that are writable/creatable/deletable (i.e., config true, which is the default).
+        These data nodes may be considered sensitive or vulnerable in some network
+        environments. Write operations (e.g., edit-config) to these data nodes without
+        proper protection can have a negative effect on network operations. There are
+        the subtrees and data nodes and their sensitivity/vulnerability:
+      </t>
+      <ul spacing="compact" empty="true">
+        <li>/node/neighbors</li>
+        <li>/node/convergence-layer-adapters</li>
+        <li>/store
+        Modifications to these data nodes may result in a
+        denial of service.</li>
+      </ul>
+
+      <t>
+        Some of the readable data nodes in the ietf-bundle-protocol.yang module
+        may be considered sensitive or vulnerable in some network environments. It is thus
+        important to control read access (e.g., via get, get-config, or notification)
+        to these data nodes.
+      </t>
     </section>
   </middle>
   <back>
@@ -670,8 +708,12 @@ module ietf-bundle-protocol {
         <xi:include href="https://www.rfc-editor.org/refs/bibxml/reference.RFC.3688.xml"/>
         <xi:include href="https://www.rfc-editor.org/refs/bibxml/reference.RFC.5050.xml"/>
         <xi:include href="https://www.rfc-editor.org/refs/bibxml/reference.RFC.6020.xml"/>
+        <xi:include href="https://www.rfc-editor.org/refs/bibxml/reference.RFC.6242.xml"/>
         <xi:include href="https://www.rfc-editor.org/refs/bibxml/reference.RFC.7950.xml"/>
+        <xi:include href="https://www.rfc-editor.org/refs/bibxml/reference.RFC.8040.xml"/>
         <xi:include href="https://www.rfc-editor.org/refs/bibxml/reference.RFC.8174.xml"/>
+        <xi:include href="https://www.rfc-editor.org/refs/bibxml/reference.RFC.8341.xml"/>
+        <xi:include href="https://www.rfc-editor.org/refs/bibxml/reference.RFC.8446.xml"/>
         <xi:include href="https://www.rfc-editor.org/refs/bibxml/reference.RFC.9171.xml"/>
       </references>
       <references>
