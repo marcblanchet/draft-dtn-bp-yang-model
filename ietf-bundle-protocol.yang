@@ -126,8 +126,13 @@ module ietf-bundle-protocol {
       description
         "The bundle queue size in bytes";
     }
-    leaf-list convergence-layer-adapters {
-      type bundle-types:convergence-layer-adapter-type;
+    container convergence-layer-adapters {
+      list convergence-layer-adapter {
+        key "id";
+        uses bundle-types:convergence-layer-adapter;
+        description
+          "A configured convergence layer adapter on the node";
+      }
       description
         "The list of convergence layer adapters currently configured
          on the node";
