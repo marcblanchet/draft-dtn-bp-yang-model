@@ -14,6 +14,9 @@
     <author fullname="Marc Blanchet" initials="M">
        <organization>Viagenie</organization>
       <address>
+        <postal>
+         <country>Canada</country>
+        </postal>
         <email>marc.blanchet@viagenie.ca</email>
       </address>
     </author>
@@ -75,25 +78,36 @@
       <figure>
         <name>Tree diagram of the BP node</name>
         <artwork>
+            module: ietf-bundle-protocol
               +--rw node
                  +--rw version*                      bundle-types:bundle-protocol-version
                  +--rw endpoint_identifier?          bundle-types:bundle-endpoint-identifier
                  +--rw bundle-lifetime?              uint32
                  +--rw maximum-bundle-size?          uint32
                  +--rw send-status-reports?          boolean
+                 +--rw forwarding?                   boolean
                  +--rw neighbors
                  |  +--rw neighbor* [endpoint-identifier]
-                 |     +--rw activate?                    boolean
-                 |     +--ro active?                      boolean
-                 |     +--rw endpoint-identifier          bundle-types:bundle-endpoint-identifier
-                 |     +--rw convergence-layer-adapter
-                 |        +--rw type?         bundle-types:convergence-layer-adapter-type
-                 |        +--rw (transport)?
-                 |           +--:(udp-and-tcp)
-                 |              +--rw ip?     inet:ip-address
-                 |              +--rw port?   inet:port-number
+                 |     +--rw activate?                     boolean
+                 |     +--ro active?                       boolean
+                 |     +--rw endpoint-identifier           bundle-types:bundle-endpoint-identifier
+                 |     +--rw convergence-layer-adapters
+                 |        +--rw convergence-layer-adapter* [id]
+                 |           +--rw id            yang:yang-identifier
+                 |           +--rw type?         bundle-types:convergence-layer-adapter-type
+                 |           +--rw (transport)?
+                 |              +--:(udp-and-tcp)
+                 |                 +--rw host?   inet:host
+                 |                 +--rw port?   inet:port-number
                  +--rw bundle-queue-size?            uint32
-                 +--rw convergence-layer-adapters*   bundle-types:convergence-layer-adapter-type
+                 +--rw convergence-layer-adapters
+                 |  +--rw convergence-layer-adapter* [id]
+                 |     +--rw id            yang:yang-identifier
+                 |     +--rw type?         bundle-types:convergence-layer-adapter-type
+                 |     +--rw (transport)?
+                 |        +--:(udp-and-tcp)
+                 |           +--rw host?   inet:host
+                 |           +--rw port?   inet:port-number
                  +--rw store
                     +--rw maximum-size?      uint32
                     +--ro current-size?      uint32
@@ -116,7 +130,7 @@
       <name>Bundle Protocol Types YANG Module</name>
       <artwork><![CDATA[
     <CODE BEGINS> file "ietf-bundle-protocol-types@2023-07-05.yang"
-module ietf-bundle-protocol-types {
+    module ietf-bundle-protocol-types {
       yang-version 1.1;
       namespace "urn:ietf:params:xml:ns:yang:ietf-bundle-protocol-types";
       prefix bundle-types;
@@ -354,10 +368,10 @@ module ietf-bundle-protocol-types {
       }
 
       grouping address-port {
-        leaf ip {
-          type inet:ip-address;
+        leaf host {
+          type inet:host;
           description
-            "The IPv4 or IPv6 address";
+            "The IPv4, IPv6 address or hostname";
         }
         leaf port {
           type inet:port-number;
@@ -365,10 +379,16 @@ module ietf-bundle-protocol-types {
             "The tranport port number";
         }
         description
-          "IP address and port";
+          "IP address or hostname and port";
       }
 
       grouping convergence-layer-adapter {
+        leaf id {
+          type yang:yang-identifier;
+          description
+            "Unique id of this CLA. Local to the implementation. Enables referencing it for
+             management purposes";
+        }
         leaf type {
           type bundle-types:convergence-layer-adapter-type;
           description
@@ -444,7 +464,6 @@ module ietf-bundle-protocol-types {
            RFC 9171 Bundle Protocol Version 7";
       }
     }
-
     <CODE ENDS>
           ]]></artwork>
     </section>
@@ -534,6 +553,13 @@ module ietf-bundle-protocol {
       description
         "Should the node send status reports";
     }
+    leaf forwarding {
+      type boolean;
+      default "false";
+      description
+        "Controls forwarding of bundles received by,
+         but not addressed to, this node.";
+    }
     container neighbors {
       list neighbor {
         key "endpoint-identifier";
@@ -556,11 +582,15 @@ module ietf-bundle-protocol {
           description
             "Endpoint identifier of the neighbor";
         }
-        /* here should be augmented by the contact plan start, stop time, ... */
-        container convergence-layer-adapter {
-          uses bundle-types:convergence-layer-adapter;
+        container convergence-layer-adapters {
+          list convergence-layer-adapter {
+            key "id";
+            uses bundle-types:convergence-layer-adapter;
+            description
+              "A convergence layer adapter of this neighbor";
+          }
           description
-            "The convergence layer adapter of this neighbor";
+            "The convergence layer adapters of this neighbor";
         }
       }
       description
@@ -576,8 +606,13 @@ module ietf-bundle-protocol {
       description
         "The bundle queue size in bytes";
     }
-    leaf-list convergence-layer-adapters {
-      type bundle-types:convergence-layer-adapter-type;
+    container convergence-layer-adapters {
+      list convergence-layer-adapter {
+        key "id";
+        uses bundle-types:convergence-layer-adapter;
+        description
+          "A configured convergence layer adapter on the node";
+      }
       description
         "The list of convergence layer adapters currently configured
          on the node";
@@ -618,7 +653,6 @@ module ietf-bundle-protocol {
     }
   }
 }
-
 <CODE ENDS>
       ]]></artwork>
     </section>
