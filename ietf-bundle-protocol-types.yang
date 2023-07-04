@@ -236,10 +236,10 @@ module ietf-bundle-protocol-types {
   }
 
   grouping address-port {
-    leaf ip {
-      type inet:ip-address;
+    leaf host {
+      type inet:host;
       description
-        "The IPv4 or IPv6 address";
+        "The IPv4, IPv6 address or hostname";
     }
     leaf port {
       type inet:port-number;
@@ -247,7 +247,7 @@ module ietf-bundle-protocol-types {
         "The tranport port number";
     }
     description
-      "IP address and port";
+      "IP address or hostname and port";
   }
 
   grouping convergence-layer-adapter {
