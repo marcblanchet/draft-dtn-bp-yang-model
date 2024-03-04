@@ -7,7 +7,7 @@
 <!ENTITY nbhy "&#8209;">
 <!ENTITY wj "&#8288;">
 ]>
-<rfc xmlns:xi="http://www.w3.org/2001/XInclude" category="std" docName="draft-blanchet-dtn-bp-yang-model-00" ipr="trust200902" obsoletes="" updates="" submissionType="IETF" xml:lang="en" version="3">
+<rfc xmlns:xi="http://www.w3.org/2001/XInclude" category="std" docName="draft-blanchet-dtn-bp-yang-model-01" ipr="trust200902" obsoletes="" updates="" submissionType="IETF" xml:lang="en" version="3">
   <front>
     <title>Bundle Protocol Yang Model</title>
     <seriesInfo name="Internet-Draft" value="draft-blanchet-dtn-bp-yang-model"/>
@@ -34,8 +34,7 @@
         <email>yingzhen.qu@futurewei.com</email>
       </address>
     </author>
-    <date year="2023"/>
-    <area>Transport</area>
+    <area>Internet</area>
     <workgroup>Internet Engineering Task Force</workgroup>
     <keyword>yang</keyword>
     <keyword>dtn</keyword>
@@ -58,9 +57,9 @@
         interfaces, such as CLI and programmatic APIs.
       </t>
       <t>The YANG model in this document specifies the data model to manage a Bundle Protocol (BP) node. It supports both BP version 6 <xref target="RFC5050"/> and version 7 <xref target="RFC9171"/>.</t>
-      <t>The Bundle Protocol<xref target="RFC9171"/> is typically used for Delay and Disruption Tolerant Networks (DTN) where connectivity is often disrupted by long periods and communications delays are multiple orders of magnitude longer than terrestrial Internet. These communications characteristics are not typical in normal Internet or enterprise Network Management scenarios. For that reason, a new network management protocol and infrastructure, named DTN Management Architecture (DTNMA), is defined <xref target="draft-ietf-dtn-dtnma"/> by the DTN working group, where the network management interactions are typically in-band (aka over Bundle protocol) and asynchronous.</t>
+      <t>The Bundle Protocol<xref target="RFC9171"/> is typically used for Delay and Disruption Tolerant Networks (DTN) where connectivity is often disrupted by long periods and communications delays are multiple orders of magnitude longer than terrestrial Internet. These communications characteristics are not typical in normal Internet or enterprise Network Management scenarios. For that reason, a new network management protocol and infrastructure, named DTN Management Architecture (DTNMA), is defined <xref target="I-D.ietf-dtn-dtnma"/> by the DTN working group, where the network management interactions are typically in-band (aka over Bundle protocol) and asynchronous.</t>
       <t>An important use case of Delay-Tolerant Networks(DTN) using the Bundle Protocol<xref target="RFC9171"/> is in space communications. Current scenarios by space agencies<xref target="ioag"/> involves the use of an IP network on the planetary body and the use of the Bundle Protocol between planetary bodies, including Earth. Therefore, some Bundle Protocol nodes will also be IP connected on those isolated IP networks. This document enables the network management of Bundle protocol instances for these BP-and-IP-connected nodes using IP-based NETCONF or RESTCONF.</t>
-      <t>By adding the capabilities of this document, the following network management scenarios are possible. First, a network management station on the isolated IP network, such as on a planetary body, is managing all the BP-IP nodes reachable directly on its IP network using either NETCONF or RESTCONF with this document Yang model. Second, with this document Yang model, a network management station on another planetary body, such as Earth, is managing BP-IP nodes on remote IP networks on other planetery bodies by encapsulating RESTCONF queries and response over HTTP over Bundle protocol over the DTN network in deep space, such encapsulation is described in <xref target="draft-blanchet-http-over-bp"/>. Finally, these dual protocol (BP and IP) nodes as well as BP only nodes are managed by DNTMA.</t>
+      <t>By adding the capabilities of this document, the following network management scenarios are possible. First, a network management station on the isolated IP network, such as on a planetary body, is managing all the BP-IP nodes reachable directly on its IP network using either NETCONF or RESTCONF with this document Yang model. Second, with this document Yang model, a network management station on another planetary body, such as Earth, is managing BP-IP nodes on remote IP networks on other planetery bodies by encapsulating RESTCONF queries and response over HTTP over Bundle protocol over the DTN network in deep space, such encapsulation is described in <xref target="I-D.blanchet-dtn-http-over-bp"/>. Finally, these dual protocol (BP and IP) nodes as well as BP only nodes are managed by DNTMA.</t>
       <section anchor="requirements">
         <name>Requirements Language</name>
         <t>The key words "MUST", "MUST NOT", "REQUIRED", "SHALL",
@@ -74,7 +73,7 @@
     <section>
       <name>Design of the Yang model</name>
       <t>Two modules are defined. The ietf-bundle-protocol-types module defines various base Yang models, mostly typedefs and groupings,  that can be reused in other BP related models. The ietf-bundle-protocol module defines the Yang model of a BP node including its storage of bundles.</t>
-      <t>It is expected to be augmented by TVR contact plan work<xref target="draft-qu-tvr-schedule-yang"/>.</t>
+      <t>It is expected to be augmented by TVR contact plan work<xref target="I-D.united-tvr-schedule-yang"/>.</t>
       <figure>
         <name>Tree diagram of the BP node</name>
         <artwork>
@@ -753,34 +752,9 @@ module ietf-bundle-protocol {
       <references>
         <name>Informative References</name>
         <xi:include href="https://www.rfc-editor.org/refs/bibxml/reference.RFC.6241.xml"/>
-        <reference anchor="draft-qu-tvr-schedule-yang" target="draft-qu-tvr-schedule-yang-00">
-             <front>
-                 <title>YANG Model for Scheduled Attributes</title>
-                 <author fullname="Yingzhen Qu" initials="Y" surname="Qu"/>
-                 <author fullname="Acee Lindem" initials="A." surname="Lindem"/>
-                 <author fullname="Marc Blanchet" initials="M" surname="Blanchet"/>
-                 <date month="07" year="2023"/>
-             </front>
-             <seriesInfo name="Internet-Draft" value="draft-qu-tvr-schedule-yang-00"/>
-         </reference>
-        <reference anchor="draft-ietf-dtn-dtnma" target="draft-ietf-dtn-dtnma-05">
-          <front>
-            <title>DTN Management Architecture</title>
-            <author fullname="Edward J. Birrane" initials="E. J." surname="Birrane"/>
-            <author fullname="Sarah Heiner" initials="S." surname="Heiner"/>
-            <author fullname="Emery Annis" initials="E." surname="Annis"/>
-            <date day="12" month="March" year="2023"/>
-          </front>
-          <seriesInfo name="Internet-Draft" value="draft-ietf-dtn-dtnma-05"/>
-        </reference>
-        <reference anchor="draft-blanchet-http-over-bp" target="draft-blanchet-dtn-http-over-bp-00">
-            <front>
-                <title>Encapsulation of HTTP over Delay-Tolerant Networks(DTN) using the Bundle Protocol</title>
-                <author initials="M" surname="Blanchet"/>
-                <date year="2023"/>
-            </front>
-            <seriesInfo name="Internet-Draft" value="draft-blanchet-dtn-http-over-bp-00"/>
-        </reference>
+        <xi:include href="https://bib.ietf.org/public/rfc/bibxml3/reference.I-D.united-tvr-schedule-yang.xml"/>
+        <xi:include href="https://bib.ietf.org/public/rfc/bibxml3/reference.I-D.ietf-dtn-dtnma.xml"/>
+        <xi:include href="https://bib.ietf.org/public/rfc/bibxml3/reference.I-D.blanchet-dtn-http-over-bp.xml"/>
         <reference anchor="ioag">
           <front>
             <title>The Future Lunar Communications Architecture, Report of the Interagency Operations Advisory Group</title>
