@@ -7,10 +7,10 @@
 <!ENTITY nbhy "&#8209;">
 <!ENTITY wj "&#8288;">
 ]>
-<rfc xmlns:xi="http://www.w3.org/2001/XInclude" category="std" docName="draft-blanchet-dtn-bp-yang-model-01" ipr="trust200902" obsoletes="" updates="" submissionType="IETF" xml:lang="en" version="3">
+<rfc xmlns:xi="http://www.w3.org/2001/XInclude" category="std" docName="draft-blanchet-dtn-bp-yang-model-02" ipr="trust200902" obsoletes="" updates="" submissionType="IETF" xml:lang="en" version="3">
   <front>
-    <title>Bundle Protocol Yang Model</title>
-    <seriesInfo name="Internet-Draft" value="draft-blanchet-dtn-bp-yang-model"/>
+    <title>Bundle Protocol YANG Data Model</title>
+    <seriesInfo name="Internet-Draft" value="draft-blanchet-dtn-bp-yang-model-02"/>
     <author fullname="Marc Blanchet" initials="M">
        <organization>Viagenie</organization>
       <address>
@@ -40,26 +40,17 @@
     <keyword>dtn</keyword>
     <keyword>bundle</keyword>
     <abstract>
-      <t>This document describes the Yang model for the Bundle protocol.</t>
+      <t>This document describes the YANG model for the Bundle protocol.</t>
     </abstract>
   </front>
   <middle>
     <section>
       <name>Introduction</name>
-      <t>
-        YANG <xref target="RFC7950"/> is a data definition language
-        used to define the contents of a conceptual data store
-        that allows networked devices to be managed using NETCONF
-        <xref target="RFC6241"/>.  YANG is proving relevant beyond its
-        initial confines, as bindings to other interfaces (e.g., ReST) and
-        encodings other than XML (e.g., JSON) are being defined.  Furthermore,
-        YANG data models can be used as the basis for implementation of other
-        interfaces, such as CLI and programmatic APIs.
-      </t>
+
       <t>The YANG model in this document specifies the data model to manage a Bundle Protocol (BP) node. It supports both BP version 6 <xref target="RFC5050"/> and version 7 <xref target="RFC9171"/>.</t>
       <t>The Bundle Protocol<xref target="RFC9171"/> is typically used for Delay and Disruption Tolerant Networks (DTN) where connectivity is often disrupted by long periods and communications delays are multiple orders of magnitude longer than terrestrial Internet. These communications characteristics are not typical in normal Internet or enterprise Network Management scenarios. For that reason, a new network management protocol and infrastructure, named DTN Management Architecture (DTNMA), is defined <xref target="I-D.ietf-dtn-dtnma"/> by the DTN working group, where the network management interactions are typically in-band (aka over Bundle protocol) and asynchronous.</t>
       <t>An important use case of Delay-Tolerant Networks(DTN) using the Bundle Protocol<xref target="RFC9171"/> is in space communications. Current scenarios by space agencies<xref target="ioag"/> involves the use of an IP network on the planetary body and the use of the Bundle Protocol between planetary bodies, including Earth. Therefore, some Bundle Protocol nodes will also be IP connected on those isolated IP networks. This document enables the network management of Bundle protocol instances for these BP-and-IP-connected nodes using IP-based NETCONF or RESTCONF.</t>
-      <t>By adding the capabilities of this document, the following network management scenarios are possible. First, a network management station on the isolated IP network, such as on a planetary body, is managing all the BP-IP nodes reachable directly on its IP network using either NETCONF or RESTCONF with this document Yang model. Second, with this document Yang model, a network management station on another planetary body, such as Earth, is managing BP-IP nodes on remote IP networks on other planetery bodies by encapsulating RESTCONF queries and response over HTTP over Bundle protocol over the DTN network in deep space, such encapsulation is described in <xref target="I-D.blanchet-dtn-http-over-bp"/>. Finally, these dual protocol (BP and IP) nodes as well as BP only nodes are managed by DNTMA.</t>
+      <t>By adding the capabilities of this document, the following network management scenarios are possible. First, a network management station on the isolated IP network, such as on a planetary body, is managing all the BP-IP nodes reachable directly on its IP network using either NETCONF or RESTCONF with this document YANG model. Second, with this document YANG model, a network management station on another planetary body, such as Earth, is managing BP-IP nodes on remote IP networks on other planetery bodies by encapsulating RESTCONF queries and response over HTTP over Bundle protocol over the DTN network in deep space, such encapsulation is described in <xref target="I-D.blanchet-dtn-http-over-bp"/>. Finally, these dual protocol (BP and IP) nodes as well as BP only nodes are managed by DNTMA.</t>
       <section anchor="requirements">
         <name>Requirements Language</name>
         <t>The key words "MUST", "MUST NOT", "REQUIRED", "SHALL",
@@ -73,403 +64,410 @@
     <section>
       <name>Design of the Yang model</name>
       <t>Two modules are defined. The ietf-bundle-protocol-types module defines various base Yang models, mostly typedefs and groupings,  that can be reused in other BP related models. The ietf-bundle-protocol module defines the Yang model of a BP node including its storage of bundles.</t>
-      <t>It is expected to be augmented by TVR contact plan work<xref target="I-D.united-tvr-schedule-yang"/>.</t>
+      <t>It is expected to be augmented by TVR contact plan work<xref target="I-D.ietf-tvr-schedule-yang"/>.</t>
       <figure>
         <name>Tree diagram of the BP node</name>
         <artwork>
-            module: ietf-bundle-protocol
-              +--rw node
-                 +--rw version*                      bundle-types:bundle-protocol-version
-                 +--rw endpoint_identifier?          bundle-types:bundle-endpoint-identifier
-                 +--rw bundle-lifetime?              uint32
-                 +--rw maximum-bundle-size?          uint32
-                 +--rw send-status-reports?          boolean
-                 +--rw forwarding?                   boolean
-                 +--rw neighbors
-                 |  +--rw neighbor* [endpoint-identifier]
-                 |     +--rw activate?                     boolean
-                 |     +--ro active?                       boolean
-                 |     +--rw endpoint-identifier           bundle-types:bundle-endpoint-identifier
-                 |     +--rw convergence-layer-adapters
-                 |        +--rw convergence-layer-adapter* [id]
-                 |           +--rw id            yang:yang-identifier
-                 |           +--rw type?         bundle-types:convergence-layer-adapter-type
-                 |           +--rw (transport)?
-                 |              +--:(udp-and-tcp)
-                 |                 +--rw host?   inet:host
-                 |                 +--rw port?   inet:port-number
-                 +--rw bundle-queue-size?            uint32
-                 +--rw convergence-layer-adapters
-                 |  +--rw convergence-layer-adapter* [id]
-                 |     +--rw id            yang:yang-identifier
-                 |     +--rw type?         bundle-types:convergence-layer-adapter-type
-                 |     +--rw (transport)?
-                 |        +--:(udp-and-tcp)
-                 |           +--rw host?   inet:host
-                 |           +--rw port?   inet:port-number
-                 +--rw store
-                    +--rw maximum-size?      uint32
-                    +--ro current-size?      uint32
-                    +--rw maximum-bundles?   uint32
-                    +--ro bundles-number?    uint32
-                    +--rw bundles* [id]
-                       +--rw id                                 yang:yang-identifier
-                       +--rw version?                           bundle-protocol-version
-                       +--rw processing-control-flags*          bundle-processing-control-flag
-                       +--rw destination-endpoint-identifier?   bundle-endpoint-identifier
-                       +--rw source-node-endpoint-identifier?   bundle-endpoint-identifier
-                       +--rw report-to-endpoint-identifier?     bundle-endpoint-identifier
-                       +--rw creation-timestamp?                yang:timestamp
-                       +--rw lifetime?                          uint32
-                       +--rw application-data-unit-length?      uint32
+module: ietf-bundle-protocol
+  +--rw node
+     +--rw version*                      identityref
+     +--rw endpoint_identifier?          bundle-types:bundle-endpoint-identifier
+     +--rw bundle-lifetime?              uint32
+     +--rw maximum-bundle-size?          uint32
+     +--rw send-status-reports?          boolean
+     +--rw forwarding?                   boolean
+     +--rw neighbors
+     |  +--rw neighbor* [endpoint-identifier]
+     |     +--rw activate?                     boolean
+     |     +--ro active?                       boolean
+     |     +--rw endpoint-identifier           bundle-types:bundle-endpoint-identifier
+     |     +--rw convergence-layer-adapters
+     |        +--rw convergence-layer-adapter* [id]
+     |           +--rw id            yang:yang-identifier
+     |           +--rw type?         bundle-types:convergence-layer-adapter-type
+     |           +--rw (transport)?
+     |              +--:(udp-and-tcp)
+     |                 +--rw host?   inet:host
+     |                 +--rw port?   inet:port-number
+     +--rw bundle-queue-size?            uint32
+     +--rw convergence-layer-adapters
+     |  +--rw convergence-layer-adapter* [id]
+     |     +--rw id            yang:yang-identifier
+     |     +--rw type?         bundle-types:convergence-layer-adapter-type
+     |     +--rw (transport)?
+     |        +--:(udp-and-tcp)
+     |           +--rw host?   inet:host
+     |           +--rw port?   inet:port-number
+     +--rw store
+        +--rw maximum-size?      uint32
+        +--ro current-size?      uint32
+        +--rw maximum-bundles?   uint32
+        +--ro bundles-number?    uint32
+        +--rw bundles* [id]
+           +--rw id                                 yang:yang-identifier
+           +--rw version?                           identityref
+           +--rw processing-control-flags*          identityref
+           +--rw destination-endpoint-identifier?   bundle-endpoint-identifier
+           +--rw source-node-endpoint-identifier?   bundle-endpoint-identifier
+           +--rw report-to-endpoint-identifier?     bundle-endpoint-identifier
+           +--rw creation-timestamp?                yang:timestamp
+           +--rw lifetime?                          uint32
+           +--rw application-data-unit-length?      uint32           
           </artwork>
       </figure>
     </section>
     <section>
       <name>Bundle Protocol Types YANG Module</name>
       <artwork><![CDATA[
-    <CODE BEGINS> file "ietf-bundle-protocol-types@2023-07-05.yang"
-    module ietf-bundle-protocol-types {
-      yang-version 1.1;
-      namespace "urn:ietf:params:xml:ns:yang:ietf-bundle-protocol-types";
-      prefix bundle-types;
+    <CODE BEGINS> file "ietf-bundle-protocol-types@2024-07-05.yang"
+module ietf-bundle-protocol-types {
+  yang-version 1.1;
+  namespace "urn:ietf:params:xml:ns:yang:ietf-bundle-protocol-types";
+  prefix bundle-types;
 
-      import ietf-inet-types {
-        prefix inet;
+  import ietf-inet-types {
+    prefix inet;
+    reference
+      "RFC 6991: Common YANG Data Types";
+  }
+  import ietf-yang-types {
+    prefix yang;
+    reference
+      "RFC 6991: Common YANG Data Types";
+  }
+
+  organization
+    "IETF DTN: Delay-Tolerant Networking Working Group";
+  contact
+    "WG Web:   <http://datatracker.ietf.org/wg/dtn>
+     WG List:  <mailto:dtn@ietf.org>
+
+     Author:   Marc Blanchet
+               <mailto:marc.blanchet@viagenie.ca>
+     Author:    Yingzhen Qu
+               <mailto:yingzhen.ietf@gmail.com>";
+  description
+    "This module contains Bundle Protocol (RFC5050, RFC9171) types.
+
+    Copyright (c) 2024 IETF Trust and the persons identified as
+    authors of the code.  All rights reserved.
+
+    Redistribution and use in source and binary forms, with or
+    without modification, is permitted pursuant to, and subject to
+    the license terms contained in, the Revised BSD License set
+    forth in Section 4.c of the IETF Trust's Legal Provisions
+    Relating to IETF Documents
+    (https://trustee.ietf.org/license-info).
+
+    This version of this YANG module is part of RFC TBD; see
+    the RFC itself for full legal notices.";
+
+  revision 2024-07-05 {
+    description
+      "Initial revision. date TBD";
+    reference
+      "RFC 5050 Bundle Protocol Specification
+       RFC 9171 Bundle Protocol Version 7
+       IANA Bundle Protocol Registry,
+       https://www.iana.org/assignments/bundle/bundle.xhtml";
+  }
+
+  /* Bundle Block Types */
+  identity bundle-block-types {
+    description
+      "Base identity for bundle block types. The Bundle Block Types
+       are defined in IANA Bundle Protocol registry.";
+  }
+ 
+  identity bundle-payload-block {
+    base bundle-block-types;
+    description
+      "Bundle payload block type";
+  }
+
+  identity bundle-authentication-block {
+    base bundle-block-types;
+    description
+      "Bundle authentication block type";
+  }
+
+  identity payload-integrity-block {
+    base bundle-block-types;
+    description
+      "Payload integrity block type";
+  }
+  
+  identity payload-confidentiality-block {
+    base bundle-block-types;
+    description
+      "Payload confidentiality block type";
+  }
+
+  identity previous-hop-insertion-block {
+    base bundle-block-types;
+    description
+      "Previous-hop insertion block type";
+  }
+  
+  identity previous-node {
+    base bundle-block-types;
+    description
+      "Previous node type";
+  }
+  
+  identity bundle-age {
+    base bundle-block-types;
+    description
+      "Bundle age type";
+  }
+  
+  identity metadata-extension-block {
+    base bundle-block-types;
+    description
+      "Metadata extension type";
+  }
+  
+  identity extension-security-block {
+    base bundle-block-types;
+    description
+      "Extension security block type";
+  }
+
+  identity hop-count {
+    base bundle-block-types;
+    description
+      "Hop count type";
+  }
+  
+  identity block-integrity {
+    base bundle-block-types;
+    description
+      "Block integrity type";
+  }
+
+  identity block-confidentially {
+    base bundle-block-types;
+    description
+      "Block confidentiality type";
+  }
+
+  /* Primary Bundle Protocol Version */
+  identity bundle-protocol-version {
+    description
+      "Base identity for primary bundle protocol version. The
+       Primary Bundle Protocol Version is defined in IANA
+       Bundle Protocol registry.";
+  }
+
+  identity version6 {
+    base bundle-protocol-version;
+    description
+      "The Bundle protocol version 6 as defined in RFC5050";
+  }
+
+  identity version7 {
+    base bundle-protocol-version;
+    description
+      "The Bundle protocol version 7 as defined in RFC9171";
+  }
+
+  /* Block Processing Control Flags */
+  identity block-processing-control-flag {
+    description
+      "Base identity for bundle processing control flags";
+  }
+
+  identity block-replicated-every-fragment {
+    base block-processing-control-flag;
+    description
+      "Block must be replicated in every fragment";
+  }
+
+  identity transmit-status-report-block-not-processed {
+    base block-processing-control-flag;
+    description
+      "Transmit status report if block can't be processed";
+  }
+  
+  identity delete-bundle-block-not-processed {
+    base block-processing-control-flag;
+    description
+      "Delete bundle if block can't be processed";
+  }
+  
+  identity last-block {
+    base block-processing-control-flag;
+    description
+      "Last block";
+  }
+  
+  identity discard-block-not-processed {
+    base block-processing-control-flag;
+    description
+      "Discard block if it can't be processed";
+  }
+  
+  identity block-forwarded-not-processed {
+    base block-processing-control-flag;
+    description
+      "Block was forwarded without being processed";
+  }
+  
+  identity block-contains-eid-reference {
+    base block-processing-control-flag;
+    description
+      "Block contains an EID-reference field";
+  }
+
+  typedef convergence-layer-adapter-type {
+    type enumeration {
+      enum tcpcl {
+        description
+          "TCP convergence layer";
         reference
-          "RFC 6991: Common YANG Data Types";
+          "RFC7242: Delay-Tolerant Networking TCP
+           Convergence-Layer Protocol";
       }
-      import ietf-yang-types {
-        prefix yang;
-      }
-
-      organization
-        "IETF DTN: Delay-Tolerant Networking Working Group";
-      contact
-        "WG Web:   <http://datatracker.ietf.org/wg/dtn>
-         WG List:  <mailto:dtn@ietf.org>
-
-         Author:   Marc Blanchet
-                   <mailto:marc.blanchet@viagenie.ca>
-         Author:    Yingzhen Qu
-                   <mailto:yingzhen.ietf@gmail.com>";
-      description
-        "This module contains Bundle Protocol (RFC5050, RFC9171) types.
-
-          The key words 'MUST', 'MUST NOT', 'REQUIRED', 'SHALL', 'SHALL
-          NOT', 'SHOULD', 'SHOULD NOT', 'RECOMMENDED', 'NOT RECOMMENDED',
-          'MAY', and 'OPTIONAL' in this document are to be interpreted as
-          described in BCP 14 (RFC 2119) (RFC 8174) when, and only when,
-          they appear in all capitals, as shown here.
-
-          Copyright (c) 2023 IETF Trust and the persons identified as
-          authors of the code.  All rights reserved.
-
-          Redistribution and use in source and binary forms, with or
-          without modification, is permitted pursuant to, and subject to
-          the license terms contained in, the Revised BSD License set
-          forth in Section 4.c of the IETF Trust's Legal Provisions
-          Relating to IETF Documents
-          (https://trustee.ietf.org/license-info).
-
-          This version of this YANG module is part of RFC TBD; see
-          the RFC itself for full legal notices.";
-
-      revision 2023-08-01 {
+      enum tcpclv4 {
         description
-          "Initial revision. date TBD";
+          "TCPv4 convergence layer";
         reference
-          "RFC 5050 Bundle Protocol Specification
-           RFC 9171 Bundle Protocol Version 7
-           IANA Bundle Protocol Registry,
-           https://www.iana.org/assignments/bundle/bundle.xhtml";
+          "RFC9174: Delay-Tolerant Networking TCP Convergence-Layer
+           Protocol Version 4";
       }
-
-      typedef bundle-block-types {
-        type enumeration {
-          enum unknown {
-            value 0;
-            description
-              "Unknown block type";
-          }
-          enum payload-block {
-            value 1;
-            description
-              "Payload block type";
-          }
-          enum authentication-block {
-            value 2;
-            description
-              "Authentication block type";
-          }
-          enum payload-integrity-block {
-            value 3;
-            description
-              "payload integrity block type";
-          }
-          enum previous-hop-insertion-block {
-            value 4;
-            description
-              "Previous hop insertion block type";
-          }
-          enum previous-node {
-            value 6;
-            description
-              "Previous node type";
-          }
-          enum bundle-age {
-            value 7;
-            description
-              "Bundle age type";
-          }
-          enum metadata-extension-block {
-            value 8;
-            description
-              "Metadata extension type";
-          }
-          enum extension-security-block {
-            value 9;
-            description
-              "Extension security block type";
-          }
-          enum hop-count {
-            value 10;
-            description
-              "Hop count type";
-          }
-          enum block-integrity {
-            value 11;
-            description
-              "Block integrity type";
-          }
-          enum block-confidentialy {
-            value 12;
-            description
-              "Block confidentiality type";
-          }
-        }
+      enum udpcl {
         description
-          "Bundle block types";
+          "UDP convergence layer";
         reference
-          "https://www.iana.org/assignments/bundle/
-           bundle.xhtml#block-types";
+          "RFC7122: Datagram Convergence Layers for the Delay- and
+           Disruption-Tolerant Networking (DTN) Bundle Protocol and
+           Licklider Transmission Protocol (LTP)";
       }
-
-      typedef bundle-protocol-version {
-        type enumeration {
-          enum unknown {
-            value 0;
-            description
-              "An unknown or unspecified version of the Bundle protocol.";
-          }
-          enum version6 {
-            value 6;
-            description
-              " The Bundle protocol version 6 as defined in RFC5050";
-          }
-          enum version7 {
-            value 7;
-            description
-              "The Bundle protocol version 7 as defined in RFC9171";
-          }
-        }
+      enum ltp {
         description
-          "Bundle protocol version number";
+          "Licklider Transmission Protocol";
         reference
-          "https://www.iana.org/assignments/bundle/
-           bundle.xhtml#primary-version";
-      }
-
-      typedef bundle-processing-control-flag {
-        type enumeration {
-          enum unknown {
-            description
-              "Uknown control flag";
-          }
-          enum block-replicated-every-fragment {
-            description
-              "Block must be replicated in every fragment";
-          }
-          enum transmit-status-report-block-not-processed {
-            description
-              "Transmit status report if block can't be processed";
-          }
-          enum delete-bundle-block-not-processed {
-            description
-              "Delete bundle if block can't be processed";
-          }
-          enum last-block {
-            description
-              "Last block";
-          }
-          enum discard-block-not-processed {
-            description
-              "Discard block if it can't be processed";
-          }
-          enum block-forwarded-not-processed {
-            description
-              "Block was forwarded without being processed";
-          }
-          enum block-contains-eid-reference {
-            description
-              "Block contains an EID-reference field";
-          }
-        }
-        description
-          "Bundle processing control flags";
-        reference
-          "https://www.iana.org/assignments/bundle/
-           bundle.xhtml#block-processing-control";
-      }
-
-      /* TBD: more defs from IANA registry
-       */
-
-      typedef convergence-layer-adapter-type {
-        type enumeration {
-          enum tcpcl {
-            description
-              "TCP convergence layer";
-            reference
-              "RFC7242: Delay-Tolerant Networking TCP
-               Convergence-Layer Protocol";
-          }
-          enum tcpclv4 {
-            description
-              "TCPv4 convergence layer";
-            reference
-              "RFC9174: Delay-Tolerant Networking TCP Convergence-Layer
-               Protocol Version 4";
-          }
-          enum udpcl {
-            description
-              "UDP convergence layer";
-            reference
-              "RFC7122: Datagram Convergence Layers for the Delay- and
-               Disruption-Tolerant Networking (DTN) Bundle Protocol and
-               Licklider Transmission Protocol (LTP)";
-          }
-          enum ltp {
-            description
-              "Licklider Transmission Protocol";
-            reference
-              "RFC 5326: Licklider Transmission Protocol - Specification";
-          }
-        }
-        description
-          "Types of convergence layers of Bundle protocol";
-      }
-
-      typedef bundle-endpoint-identifier {
-        type inet:uri;
-        description
-          "Bundle protocol Endpoint Identifier type";
-      }
-
-      grouping address-port {
-        leaf host {
-          type inet:host;
-          description
-            "The IPv4, IPv6 address or hostname";
-        }
-        leaf port {
-          type inet:port-number;
-          description
-            "The tranport port number";
-        }
-        description
-          "IP address or hostname and port";
-      }
-
-      grouping convergence-layer-adapter {
-        leaf id {
-          type yang:yang-identifier;
-          description
-            "Unique id of this CLA. Local to the implementation. Enables referencing it for
-             management purposes";
-        }
-        leaf type {
-          type bundle-types:convergence-layer-adapter-type;
-          description
-            "Type of the convergence layer of this neighbor";
-        }
-        choice transport {
-          case udp-and-tcp {
-            uses address-port;
-          }
-          /* other cla */
-          description
-            "Convergence layer adapter specific transport information";
-        }
-        description
-          "The convergence layer adapter used to communicate
-           with this neighbor";
-      }
-
-      grouping bundle {
-        leaf id {
-          type yang:yang-identifier;
-          description
-            "Unique id of a bundle. Local to the implementation. Enables referencing it for
-             management purposes";
-        }
-        leaf version {
-          type bundle-protocol-version;
-          description
-            "Bundle protocol version";
-        }
-        leaf-list processing-control-flags {
-          type bundle-processing-control-flag;
-          description
-            "List of bundle processing control flags";
-        }
-        leaf destination-endpoint-identifier {
-          type bundle-endpoint-identifier;
-          description
-            "Endpoint identifier of the destination";
-        }
-        leaf source-node-endpoint-identifier {
-          type bundle-endpoint-identifier;
-          description
-            "Endpoint identifier of the source node";
-        }
-        leaf report-to-endpoint-identifier {
-          type bundle-endpoint-identifier;
-          description
-            "Endpoint identifier of the node to send reports to";
-        }
-        leaf creation-timestamp {
-          type yang:timestamp;
-          description
-            "Creation timestamp";
-        }
-        leaf lifetime {
-          type uint32;
-          units "seconds";
-          description
-            "Lifetime of the bundle in seconds";
-        }
-        leaf application-data-unit-length {
-          type uint32;
-          units "octets";
-          description
-            "Application data unit (aka bundle payload) length in octets";
-        }
-        /* TBD: additional fields: fragmentoffset, crc-type, ... */
-        description
-          "A bundle";
-        reference
-          "RFC 5050 Bundle Protocol Specification
-           RFC 9171 Bundle Protocol Version 7";
+          "RFC 5326: Licklider Transmission Protocol - Specification";
       }
     }
+    description
+      "Types of convergence layers of Bundle protocol";
+  }
+
+  typedef bundle-endpoint-identifier {
+    type inet:uri;
+    description
+      "Bundle protocol Endpoint Identifier type";
+  }
+
+  grouping address-port {
+    leaf host {
+      type inet:host;
+      description
+        "The IPv4, IPv6 address or hostname";
+    }
+    leaf port {
+      type inet:port-number;
+      description
+        "The tranport port number";
+    }
+    description
+      "IP address or hostname and port";
+  }
+
+  grouping convergence-layer-adapter {
+    leaf id {
+      type yang:yang-identifier;
+      description
+        "Unique id of this CLA. Local to the implementation. Enables referencing it for
+         management purposes";
+    }
+    leaf type {
+      type bundle-types:convergence-layer-adapter-type;
+      description
+        "Type of the convergence layer of this neighbor";
+    }
+    choice transport {
+      case udp-and-tcp {
+        uses address-port;
+      }
+      /* other cla */
+      description
+        "Convergence layer adapter specific transport information";
+    }
+    description
+      "The convergence layer adapter used to communicate
+       with this neighbor";
+  }
+
+  grouping bundle {
+    leaf id {
+      type yang:yang-identifier;
+      description
+        "Unique id of a bundle. Local to the implementation. Enables referencing it for
+         management purposes";
+    }
+    leaf version {
+      type identityref {
+        base bundle-protocol-version;
+      }
+      description
+        "Bundle protocol version";
+    }
+    leaf-list processing-control-flags {
+      type identityref {
+        base block-processing-control-flag;
+      }
+      description
+        "List of bundle processing control flags";
+    }
+    leaf destination-endpoint-identifier {
+      type bundle-endpoint-identifier;
+      description
+        "Endpoint identifier of the destination";
+    }
+    leaf source-node-endpoint-identifier {
+      type bundle-endpoint-identifier;
+      description
+        "Endpoint identifier of the source node";
+    }
+    leaf report-to-endpoint-identifier {
+      type bundle-endpoint-identifier;
+      description
+        "Endpoint identifier of the node to send reports to";
+    }
+    leaf creation-timestamp {
+      type yang:timestamp;
+      description
+        "Creation timestamp";
+    }
+    leaf lifetime {
+      type uint32;
+      units "seconds";
+      description
+        "Lifetime of the bundle in seconds";
+    }
+    leaf application-data-unit-length {
+      type uint32;
+      units "octets";
+      description
+        "Application data unit (aka bundle payload) length in octets";
+    }
+    /* TBD: additional fields: fragmentoffset, crc-type, ... */
+    description
+      "A bundle";
+    reference
+      "RFC 5050 Bundle Protocol Specification
+       RFC 9171 Bundle Protocol Version 7";
+  }
+}
     <CODE ENDS>
           ]]></artwork>
     </section>
     <section>
       <name>Bundle Protocol YANG Module</name>
       <artwork><![CDATA[
-<CODE BEGINS> file "ietf-bundle-protocol@2023-07-05.yang"
+<CODE BEGINS> file "ietf-bundle-protocol@2024-07-05.yang"
 module ietf-bundle-protocol {
   yang-version 1.1;
   namespace "urn:ietf:params:xml:ns:yang:ietf-bundle-protocol";
@@ -492,26 +490,20 @@ module ietf-bundle-protocol {
   description
     "This module contains Bundle Protocol (RFC5050, RFC9171) types.
 
-      The key words 'MUST', 'MUST NOT', 'REQUIRED', 'SHALL', 'SHALL
-      NOT', 'SHOULD', 'SHOULD NOT', 'RECOMMENDED', 'NOT RECOMMENDED',
-      'MAY', and 'OPTIONAL' in this document are to be interpreted as
-      described in BCP 14 (RFC 2119) (RFC 8174) when, and only when,
-      they appear in all capitals, as shown here.
+     Copyright (c) 2024 IETF Trust and the persons identified as
+     authors of the code.  All rights reserved.
 
-      Copyright (c) 2023 IETF Trust and the persons identified as
-      authors of the code.  All rights reserved.
+     Redistribution and use in source and binary forms, with or
+     without modification, is permitted pursuant to, and subject to
+     the license terms contained in, the Revised BSD License set
+     forth in Section 4.c of the IETF Trust's Legal Provisions
+     Relating to IETF Documents
+     (https://trustee.ietf.org/license-info).
 
-      Redistribution and use in source and binary forms, with or
-      without modification, is permitted pursuant to, and subject to
-      the license terms contained in, the Revised BSD License set
-      forth in Section 4.c of the IETF Trust's Legal Provisions
-      Relating to IETF Documents
-      (https://trustee.ietf.org/license-info).
+     This version of this YANG module is part of RFC TBD; see
+     the RFC itself for full legal notices.";
 
-      This version of this YANG module is part of RFC TBD; see
-      the RFC itself for full legal notices.";
-
-  revision 2023-08-01 {
+  revision 2024-07-05 {
     description
       "Initial revision. date TBD";
     reference
@@ -525,7 +517,9 @@ module ietf-bundle-protocol {
     description
       "A bundle protocol node";
     leaf-list version {
-      type bundle-types:bundle-protocol-version;
+      type identityref {
+        base bundle-types:bundle-protocol-version;
+      }
       description
         "The list of bundle protocol versions this node supports";
     }
@@ -752,7 +746,7 @@ module ietf-bundle-protocol {
       <references>
         <name>Informative References</name>
         <xi:include href="https://www.rfc-editor.org/refs/bibxml/reference.RFC.6241.xml"/>
-        <xi:include href="https://bib.ietf.org/public/rfc/bibxml3/reference.I-D.united-tvr-schedule-yang.xml"/>
+        <xi:include href="https://bib.ietf.org/public/rfc/bibxml3/reference.I-D.ietf-tvr-schedule-yang.xml"/>
         <xi:include href="https://bib.ietf.org/public/rfc/bibxml3/reference.I-D.ietf-dtn-dtnma.xml"/>
         <xi:include href="https://bib.ietf.org/public/rfc/bibxml3/reference.I-D.blanchet-dtn-http-over-bp.xml"/>
         <reference anchor="ioag">

@@ -10,6 +10,8 @@ module ietf-bundle-protocol-types {
   }
   import ietf-yang-types {
     prefix yang;
+    reference
+      "RFC 6991: Common YANG Data Types";
   }
 
   organization
@@ -25,26 +27,20 @@ module ietf-bundle-protocol-types {
   description
     "This module contains Bundle Protocol (RFC5050, RFC9171) types.
 
-      The key words 'MUST', 'MUST NOT', 'REQUIRED', 'SHALL', 'SHALL
-      NOT', 'SHOULD', 'SHOULD NOT', 'RECOMMENDED', 'NOT RECOMMENDED',
-      'MAY', and 'OPTIONAL' in this document are to be interpreted as
-      described in BCP 14 (RFC 2119) (RFC 8174) when, and only when,
-      they appear in all capitals, as shown here.
+    Copyright (c) 2024 IETF Trust and the persons identified as
+    authors of the code.  All rights reserved.
 
-      Copyright (c) 2023 IETF Trust and the persons identified as
-      authors of the code.  All rights reserved.
+    Redistribution and use in source and binary forms, with or
+    without modification, is permitted pursuant to, and subject to
+    the license terms contained in, the Revised BSD License set
+    forth in Section 4.c of the IETF Trust's Legal Provisions
+    Relating to IETF Documents
+    (https://trustee.ietf.org/license-info).
 
-      Redistribution and use in source and binary forms, with or
-      without modification, is permitted pursuant to, and subject to
-      the license terms contained in, the Revised BSD License set
-      forth in Section 4.c of the IETF Trust's Legal Provisions
-      Relating to IETF Documents
-      (https://trustee.ietf.org/license-info).
+    This version of this YANG module is part of RFC TBD; see
+    the RFC itself for full legal notices.";
 
-      This version of this YANG module is part of RFC TBD; see
-      the RFC itself for full legal notices.";
-
-  revision 2023-08-01 {
+  revision 2024-07-05 {
     description
       "Initial revision. date TBD";
     reference
@@ -54,145 +50,152 @@ module ietf-bundle-protocol-types {
        https://www.iana.org/assignments/bundle/bundle.xhtml";
   }
 
-  typedef bundle-block-types {
-    type enumeration {
-      enum unknown {
-        value 0;
-        description
-          "Unknown block type";
-      }
-      enum payload-block {
-        value 1;
-        description
-          "Payload block type";
-      }
-      enum authentication-block {
-        value 2;
-        description
-          "Authentication block type";
-      }
-      enum payload-integrity-block {
-        value 3;
-        description
-          "payload integrity block type";
-      }
-      enum previous-hop-insertion-block {
-        value 4;
-        description
-          "Previous hop insertion block type";
-      }
-      enum previous-node {
-        value 6;
-        description
-          "Previous node type";
-      }
-      enum bundle-age {
-        value 7;
-        description
-          "Bundle age type";
-      }
-      enum metadata-extension-block {
-        value 8;
-        description
-          "Metadata extension type";
-      }
-      enum extension-security-block {
-        value 9;
-        description
-          "Extension security block type";
-      }
-      enum hop-count {
-        value 10;
-        description
-          "Hop count type";
-      }
-      enum block-integrity {
-        value 11;
-        description
-          "Block integrity type";
-      }
-      enum block-confidentialy {
-        value 12;
-        description
-          "Block confidentiality type";
-      }
-    }
+  /* Bundle Block Types */
+  identity bundle-block-types {
     description
-      "Bundle block types";
-    reference
-      "https://www.iana.org/assignments/bundle/
-       bundle.xhtml#block-types";
+      "Base identity for bundle block types. The Bundle Block Types
+       are defined in IANA Bundle Protocol registry.";
+  }
+ 
+  identity bundle-payload-block {
+    base bundle-block-types;
+    description
+      "Bundle payload block type";
   }
 
-  typedef bundle-protocol-version {
-    type enumeration {
-      enum unknown {
-        value 0;
-        description
-          "An unknown or unspecified version of the Bundle protocol.";
-      }
-      enum version6 {
-        value 6;
-        description
-          " The Bundle protocol version 6 as defined in RFC5050";
-      }
-      enum version7 {
-        value 7;
-        description
-          "The Bundle protocol version 7 as defined in RFC9171";
-      }
-    }
+  identity bundle-authentication-block {
+    base bundle-block-types;
     description
-      "Bundle protocol version number";
-    reference
-      "https://www.iana.org/assignments/bundle/
-       bundle.xhtml#primary-version";
+      "Bundle authentication block type";
   }
 
-  typedef bundle-processing-control-flag {
-    type enumeration {
-      enum unknown {
-        description
-          "Uknown control flag";
-      }
-      enum block-replicated-every-fragment {
-        description
-          "Block must be replicated in every fragment";
-      }
-      enum transmit-status-report-block-not-processed {
-        description
-          "Transmit status report if block can't be processed";
-      }
-      enum delete-bundle-block-not-processed {
-        description
-          "Delete bundle if block can't be processed";
-      }
-      enum last-block {
-        description
-          "Last block";
-      }
-      enum discard-block-not-processed {
-        description
-          "Discard block if it can't be processed";
-      }
-      enum block-forwarded-not-processed {
-        description
-          "Block was forwarded without being processed";
-      }
-      enum block-contains-eid-reference {
-        description
-          "Block contains an EID-reference field";
-      }
-    }
+  identity payload-integrity-block {
+    base bundle-block-types;
     description
-      "Bundle processing control flags";
-    reference
-      "https://www.iana.org/assignments/bundle/
-       bundle.xhtml#block-processing-control";
+      "Payload integrity block type";
+  }
+  
+  identity payload-confidentiality-block {
+    base bundle-block-types;
+    description
+      "Payload confidentiality block type";
   }
 
-  /* TBD: more defs from IANA registry
-   */
+  identity previous-hop-insertion-block {
+    base bundle-block-types;
+    description
+      "Previous-hop insertion block type";
+  }
+  
+  identity previous-node {
+    base bundle-block-types;
+    description
+      "Previous node type";
+  }
+  
+  identity bundle-age {
+    base bundle-block-types;
+    description
+      "Bundle age type";
+  }
+  
+  identity metadata-extension-block {
+    base bundle-block-types;
+    description
+      "Metadata extension type";
+  }
+  
+  identity extension-security-block {
+    base bundle-block-types;
+    description
+      "Extension security block type";
+  }
+
+  identity hop-count {
+    base bundle-block-types;
+    description
+      "Hop count type";
+  }
+  
+  identity block-integrity {
+    base bundle-block-types;
+    description
+      "Block integrity type";
+  }
+
+  identity block-confidentially {
+    base bundle-block-types;
+    description
+      "Block confidentiality type";
+  }
+
+  /* Primary Bundle Protocol Version */
+  identity bundle-protocol-version {
+    description
+      "Base identity for primary bundle protocol version. The
+       Primary Bundle Protocol Version is defined in IANA
+       Bundle Protocol registry.";
+  }
+
+  identity version6 {
+    base bundle-protocol-version;
+    description
+      "The Bundle protocol version 6 as defined in RFC5050";
+  }
+
+  identity version7 {
+    base bundle-protocol-version;
+    description
+      "The Bundle protocol version 7 as defined in RFC9171";
+  }
+
+  /* Block Processing Control Flags */
+  identity block-processing-control-flag {
+    description
+      "Base identity for bundle processing control flags";
+  }
+
+  identity block-replicated-every-fragment {
+    base block-processing-control-flag;
+    description
+      "Block must be replicated in every fragment";
+  }
+
+  identity transmit-status-report-block-not-processed {
+    base block-processing-control-flag;
+    description
+      "Transmit status report if block can't be processed";
+  }
+  
+  identity delete-bundle-block-not-processed {
+    base block-processing-control-flag;
+    description
+      "Delete bundle if block can't be processed";
+  }
+  
+  identity last-block {
+    base block-processing-control-flag;
+    description
+      "Last block";
+  }
+  
+  identity discard-block-not-processed {
+    base block-processing-control-flag;
+    description
+      "Discard block if it can't be processed";
+  }
+  
+  identity block-forwarded-not-processed {
+    base block-processing-control-flag;
+    description
+      "Block was forwarded without being processed";
+  }
+  
+  identity block-contains-eid-reference {
+    base block-processing-control-flag;
+    description
+      "Block contains an EID-reference field";
+  }
 
   typedef convergence-layer-adapter-type {
     type enumeration {
@@ -283,12 +286,16 @@ module ietf-bundle-protocol-types {
          management purposes";
     }
     leaf version {
-      type bundle-protocol-version;
+      type identityref {
+        base bundle-protocol-version;
+      }
       description
         "Bundle protocol version";
     }
     leaf-list processing-control-flags {
-      type bundle-processing-control-flag;
+      type identityref {
+        base block-processing-control-flag;
+      }
       description
         "List of bundle processing control flags";
     }

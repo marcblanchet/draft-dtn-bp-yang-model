@@ -20,26 +20,20 @@ module ietf-bundle-protocol {
   description
     "This module contains Bundle Protocol (RFC5050, RFC9171) types.
 
-      The key words 'MUST', 'MUST NOT', 'REQUIRED', 'SHALL', 'SHALL
-      NOT', 'SHOULD', 'SHOULD NOT', 'RECOMMENDED', 'NOT RECOMMENDED',
-      'MAY', and 'OPTIONAL' in this document are to be interpreted as
-      described in BCP 14 (RFC 2119) (RFC 8174) when, and only when,
-      they appear in all capitals, as shown here.
+     Copyright (c) 2024 IETF Trust and the persons identified as
+     authors of the code.  All rights reserved.
 
-      Copyright (c) 2023 IETF Trust and the persons identified as
-      authors of the code.  All rights reserved.
+     Redistribution and use in source and binary forms, with or
+     without modification, is permitted pursuant to, and subject to
+     the license terms contained in, the Revised BSD License set
+     forth in Section 4.c of the IETF Trust's Legal Provisions
+     Relating to IETF Documents
+     (https://trustee.ietf.org/license-info).
 
-      Redistribution and use in source and binary forms, with or
-      without modification, is permitted pursuant to, and subject to
-      the license terms contained in, the Revised BSD License set
-      forth in Section 4.c of the IETF Trust's Legal Provisions
-      Relating to IETF Documents
-      (https://trustee.ietf.org/license-info).
+     This version of this YANG module is part of RFC TBD; see
+     the RFC itself for full legal notices.";
 
-      This version of this YANG module is part of RFC TBD; see
-      the RFC itself for full legal notices.";
-
-  revision 2023-08-01 {
+  revision 2024-07-05 {
     description
       "Initial revision. date TBD";
     reference
@@ -53,7 +47,9 @@ module ietf-bundle-protocol {
     description
       "A bundle protocol node";
     leaf-list version {
-      type bundle-types:bundle-protocol-version;
+      type identityref {
+        base bundle-types:bundle-protocol-version;
+      }
       description
         "The list of bundle protocol versions this node supports";
     }
